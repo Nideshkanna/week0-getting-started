@@ -94,8 +94,10 @@ module and_gate (input a, input b, output y);
   assign y = a & b;
 endmodule
 ```
+## Executed Image
+  ![design](images/08Design_code.png)
+  
 ### Step 2: Write a Testbench
-
 Example: `tb_and_gate.v`
 ```verilog
 module tb_and_gate;
@@ -116,15 +118,26 @@ module tb_and_gate;
   end
 endmodule
 ```
+## Executed Image
+  ![design](images/09TestBench.png)
+
 ### Step 3: Simulate with Icarus Verilog
 ```bash
 iverilog -o and_gate_tb tb_and_gate.v and_gate.v
 vvp and_gate_tb
 ```
+## Executed Image
+  ![design](images/11Dumpfile.png)
+
+✅ Successful simulation with Icarus Verilog – generated and_gate.vcd for waveform view in GTKWave.
+
 ### Step 4: View Waveforms in GTKWave
 ```bash
 gtkwave and_gate.vcd
 ```
+## Executed Image
+  ![design](images/12GTKWAVE.png)
+
 ### Step 5: Optional – Synthesis with Yosys
 ```bash
 yosys
@@ -132,7 +145,28 @@ yosys> read_verilog and_gate.v
 yosys> synth -top and_gate
 yosys> write_json and_gate.json
 ```
+## Executed Image
+  ![design](images/13yosys_1.png)
 
+✅ Yosys started and Verilog design (and_gate.v) was read into synthesis flow.
+  
+  ![design](images/13yosys_2.png)
+
+✅ Yosys synthesis completed – statistics show 1 logic cell ($_AND_) inferred.
+
+✅ and_gate.json generated – JSON netlist representation of the synthesized AND gate.
+
+## To Visualize The design use these command
+```bash
+yosys
+read_verilog and_gate.v
+synth -top and_gate #top_module_name
+show
+```
+## Design code visualization 
+
+  ![design](images/AND_Gate.png)
+  
 ✅ This validates the installed tools:
 
     Icarus Verilog → Compiles & simulates
@@ -145,6 +179,7 @@ yosys> write_json and_gate.json
 📤 Task 3: GitHub Submission
 
 This repository serves as the official Week 0 submission.
+
 👉 Repo link: [https://github.com/Nideshkanna/week0-getting-started]
 
 ✅ Final Notes
