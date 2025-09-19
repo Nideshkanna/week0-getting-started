@@ -1,3 +1,5 @@
+# 🖥️ RISC-V Reference SoC Tapeout Program VSD
+
 # Week 0 – Getting Started with Digital VLSI SoC Design and Tools
 
 ## 📌 Overview
@@ -9,16 +11,75 @@ It has three main tasks:
 
 ---
 
-## 📝 Task 1: Getting Started with Digital VLSI SoC Design
-- **Summary of the introductory video**  
-  👉 *(Write your summary here in 5–10 bullet points)*  
+# 🚀 Getting Started with Digital VLSI SoC Design  
 
-Example outline (replace with your own notes):  
-- Introduction to Digital VLSI design flow.  
-- Overview of RTL-to-GDSII stages.  
-- Importance of open-source EDA tools.  
-- Planning chip design projects in structured phases.  
-- Role of fabrication PDKs and open-source communities.  
+This guide outlines the **complete workflow** for a Digital VLSI (Very Large-Scale Integration) SoC (System on Chip) design, from **high-level modeling** to **final silicon fabrication**.  
+The **core principle** is to maintain **functional equivalence** across all stages →  
+**O0 = O1 = O2 = O3 = O4** ✅  
+
+---
+
+## 📝 The Design Philosophy  
+
+> **Golden Rule of Verification:**  
+> The functional output must remain **identical** across every abstraction stage.  
+
+- A **C-language testbench** serves as the **single source of truth** ("golden model").  
+- Ensures correctness from **specification → RTL → SoC integration → silicon**.  
+- Guarantees a **reliable, manufacturable chip design**.  
+
+---
+
+## 📊 Processor Compilation Stages  
+
+| Stage | Description | Key Artifact |
+|-------|-------------|--------------|
+| **O0** | C Program | High-level C application code. |
+| **O1** | Chip Modelling (Specs) | Executable C model specification. |
+| **O2** | RTL Architect | RTL hardware description (Verilog “soft copy”). |
+| **O3** | SoC Integration | Processor + peripherals/IPs integration (GPIO, memory, etc.). |
+| **O4** | Final Silicon Board | Fabricated board after tape-in. |
+
+---
+
+## 🔄 The Digital VLSI Design Flow  
+
+1. **Chip Modelling (Specs – C model)**  
+   - Define chip behavior in **C**.  
+   - Serves as the **blueprint** and reference.  
+
+2. **RTL Design (Verilog)**  
+   - Convert C model → RTL description.  
+   - Partition into **processor + peripherals/IPs**.  
+
+3. **ASIC Synthesis**  
+   - Translate RTL → **Gate-level netlist**.  
+   - Map design to **standard cell libraries**.  
+   - Integrate macros + analog IPs.  
+
+4. **RTL-to-GDS (Physical Design)**  
+   - **Floorplanning** → Place blocks.  
+   - **Placement** → Arrange standard cells.  
+   - **Routing** → Connect wires.  
+   - Output → **GDSII file** (mask data).  
+
+5. **Tape-Out**  
+   - Perform **DRC/LVS checks** to ensure manufacturability.  
+   - Send final **GDSII** to foundry.  
+
+6. **Tape-In**  
+   - Fabricate silicon wafers.  
+   - Cut into dies → package into **final chip**.  
+
+  ![yosys](images/flow.jpeg)
+
+---
+
+## 🛠️ Key Takeaways  
+
+- **Abstractions are key** → From high-level C model → low-level GDSII.  
+- **Verification is king** → Same **C testbench** ensures correctness at every stage.  
+- **Structured flow matters** → Breaking into clear phases simplifies SoC project management.  
 
 ---
 
@@ -174,17 +235,118 @@ show
     GTKWave → Visualizes waveforms
 
     Yosys → Performs synthesis
+    
+### 🔹 Ngspice
+```bash
+tar -zxvf ngspice-37.tar.gz
+cd ngspice-37
+mkdir release && cd release
+../configure --with-x --with-readline=yes --disable-debug
+make
+sudo make install
+```
+## Installation image:
+  ![yosys](images/04ngspice.png)
+  
+✅ Verify with:
+```bash
+ngspice --version
+```
+  ![yosys](images/04ngspice_version.png)
+
+### 🔹 Magic VLSI
+```bash
+sudo apt-get install m4 tcsh csh libx11-dev \
+tcl-dev tk-dev libcairo2-dev mesa-common-dev libglu1-mesa-dev libncurses-dev
+git clone https://github.com/RTimothyEdwards/magic
+cd magic
+./configure
+make
+sudo make install
+```
+## Installation image:
+
+✅ Verify with:
+```bash
+magic -d XR
+```
+  ![yosys](images/05magic.png)
+
+### 🔹 OpenLANE (with Docker)
+```bash
+sudo apt-get update && sudo apt-get upgrade
+sudo apt install -y build-essential python3 python3-venv python3-pip make git
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o \
+/usr/share/keyrings/docker-archive-keyring.gpg
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] \
+https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | \
+sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io
+
+#Post-install:
+
+sudo docker run hello-world
+sudo groupadd docker
+sudo usermod -aG docker $USER
+sudo reboot
+```
+## After reboot:
+```bash
+docker run hello-world
+```
+## Hello-world Docker output:
+  ![yosys](images/06hello_docker.png)
+  
+## Dependencies check:
+```bash
+git --version
+docker --version
+python3 --version
+python3 -m pip --version
+make --version
+python3 -m venv -h
+```
+## Version Check:
+  ![yosys](images/Final_version_check.png)
+
+### Clone & build OpenLANE:
+```bash
+cd $HOME
+git clone https://github.com/The-OpenROAD-Project/OpenLane
+cd OpenLane
+make
+make test
+```
+✅ Verify with test run output.
+## OpenLane Test Result:
+  ![yosys](images/07_openlane_make_test.png)
+
 
 
 📤 Task 3: GitHub Submission
 
 This repository serves as the official Week 0 submission.
 
-👉 Repo link: [https://github.com/Nideshkanna/week0-getting-started]
+👉 Week0 Repo link: [https://github.com/Nideshkanna/week0-getting-started]
+
+👉 Week1 Repo link: [Coming Soon]
+
+👉 Main Repo Link : [https://github.com/Nideshkanna/riscv-soc-tapeout]
 
 ✅ Final Notes
 
-- Successfully installed Yosys, Icarus Verilog, and GTKWave on Ubuntu 22.04.
+| ✅ Tool            | ⚙️ Description                                  | 📌 Status        |
+|--------------------|------------------------------------------------|-----------------|
+| Yosys              | RTL synthesis tool for digital circuits         | ✔️ Installed     |
+| Icarus Verilog     | Verilog simulation and testbench execution      | ✔️ Installed     |
+| GTKWave            | Waveform viewer for simulation results          | ✔️ Installed     |
+| Ngspice            | Circuit-level SPICE simulation engine           | ✔️ Installed     |
+| Magic              | VLSI layout editor and design rule checker      | ✔️ Installed     |
+| OpenLane           | Complete RTL-to-GDSII ASIC design flow tool     | ✔️ Installed     |
+
+
 - Verification screenshots confirm working installations.
 - This setup lays the foundation for the upcoming RTL-to-GDSII design flow.
 - Future weeks will build upon this environment with additional tools.
