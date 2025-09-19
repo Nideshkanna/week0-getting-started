@@ -83,18 +83,73 @@ gtkwave --version
 ```
   ![yosys](images/03gtkwave_version.png)
 
+## 🔄 Simple RTL Design Flow (Using Installed Tools)
+
+To validate the toolchain, a small Verilog design can be tested end-to-end.
+
+### Step 1: Write a Verilog file  
+Example: `and_gate.v`
+```verilog
+module and_gate (input a, input b, output y);
+  assign y = a & b;
+endmodule
+```
+### Step 2: Write a Testbench
+
+Example: `tb_and_gate.v`
+```verilog
+module tb_and_gate;
+  reg a, b;
+  wire y;
+
+  and_gate uut (.a(a), .b(b), .y(y));
+
+  initial begin
+    $dumpfile("and_gate.vcd");
+    $dumpvars(0, tb_and_gate);
+    
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+    $finish;
+  end
+endmodule
+```
+### Step 3: Simulate with Icarus Verilog
+```bash
+iverilog -o and_gate_tb tb_and_gate.v and_gate.v
+vvp and_gate_tb
+```
+### Step 4: View Waveforms in GTKWave
+```bash
+gtkwave and_gate.vcd
+```
+### Step 5: Optional – Synthesis with Yosys
+```bash
+yosys
+yosys> read_verilog and_gate.v
+yosys> synth -top and_gate
+yosys> write_json and_gate.json
+```
+
+✅ This validates the installed tools:
+
+    Icarus Verilog → Compiles & simulates
+
+    GTKWave → Visualizes waveforms
+
+    Yosys → Performs synthesis
+
 
 📤 Task 3: GitHub Submission
 
-    This repo serves as the Week 0 submission.
-
-    Link to repo: [Replace with your GitHub repo link here]
+This repository serves as the official Week 0 submission.
+👉 Repo link: [https://github.com/Nideshkanna/week0-getting-started]
 
 ✅ Final Notes
 
-    All required tools were successfully installed on Ubuntu 22.04.
-
-    Screenshots are provided for verification.
-
-    This setup will be reused in upcoming weeks for RTL-to-GDSII flow.
-
+- Successfully installed Yosys, Icarus Verilog, and GTKWave on Ubuntu 22.04.
+- Verification screenshots confirm working installations.
+- This setup lays the foundation for the upcoming RTL-to-GDSII design flow.
+- Future weeks will build upon this environment with additional tools.
